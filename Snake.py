@@ -1,3 +1,5 @@
+#Author: Xiar 
+
 import pygame
 import numpy as np
 
