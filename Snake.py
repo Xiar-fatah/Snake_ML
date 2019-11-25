@@ -1,8 +1,7 @@
 #Author: Xiar 
 
 import pygame
-import numpy as np
-
+import random as random
 
 size = width, height = 600, 600
 screen = pygame.display.set_mode(size)
@@ -79,22 +78,23 @@ while Bool:
         if event.type == pygame.QUIT: # Checks if the red button in the corner of the window is clicked
             Bool = False
 
+    #Check collision and generate new apple
     if apple.is_collided_with(snake):
-        print('collision!')
-        ##generate a new apple with random position
+        apple = Apple(random.random()*500, random.random()*500, 15, 15)
     
     keys = pygame.key.get_pressed()
-    
+
+    #movement
     if keys[pygame.K_LEFT]:
         snake.x -= vel
 
-    if keys[pygame.K_RIGHT]:
+    elif keys[pygame.K_RIGHT]: #Elif is added to only move in one direction
         snake.x += vel
 
-    if keys[pygame.K_UP]:
+    elif keys[pygame.K_UP]:
         snake.y -= vel
 
-    if keys[pygame.K_DOWN]:
+    elif keys[pygame.K_DOWN]:
         snake.y += vel
 
     screen.fill((0,0,0))
