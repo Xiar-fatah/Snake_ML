@@ -21,9 +21,49 @@ class Snake(object):
         self.vel = 5
         self.hitbox = (self.x, self.y, self.width, self.height)
         self.rect = pygame.Rect(self.hitbox)
+        self.directions = [0,0,0,1] # Initial position is down   
 
+        #TEST
+        snake_pos = [[self.x,self.y]]
+        
 
+    #Move function is for the movement of the snake
+    def move(self):
 
+        #Check if the key is pressed and then moves the snake in that direction
+        #and is added to not allow the player to move backwards when it is moving forwards
+        if keys[pygame.K_LEFT] and self.directions[1] != 1 :
+            self.directions = [1,0,0,0]
+            
+        #Elif is added to only move in one direction at the time
+        elif keys[pygame.K_RIGHT] and self.directions[0] != 1 : 
+            self.directions = [0,1,0,0] 
+
+        elif keys[pygame.K_UP] and self.directions[3] != 1 :
+            self.directions = [0,0,1,0] 
+
+        elif keys[pygame.K_DOWN] and self.directions[2] != 1 :
+            self.directions = [0,0,0,1] 
+
+        #To move with a constant velocity, directions was introduce, [1,0,0,0] makes the snake move only left
+        if self.directions[0] == 1:
+            self.x = self.x - 1
+        #right
+        elif self.directions[1] == 1:
+            self.x = self.x + 1
+        #down
+        elif self.directions[2] == 1:
+            self.y = self.y - 1
+        #up
+        elif self.directions[3] == 1:
+            self.y = self.y + 1
+
+    #add length to the snake
+    #def addlen(self):
+        
+
+        
+    #Draw the snake
     def draw(self, screen):
         
         self.rect = pygame.Rect(self.hitbox) #Values gets updated heres
@@ -81,21 +121,12 @@ while Bool:
     #Check collision and generate new apple
     if apple.is_collided_with(snake):
         apple = Apple(random.random()*500, random.random()*500, 15, 15)
-    
+        #Calls addlen function to make the snake longer
+        #snake.addlen() 
     keys = pygame.key.get_pressed()
 
-    #movement
-    if keys[pygame.K_LEFT]:
-        snake.x -= vel
-
-    elif keys[pygame.K_RIGHT]: #Elif is added to only move in one direction
-        snake.x += vel
-
-    elif keys[pygame.K_UP]:
-        snake.y -= vel
-
-    elif keys[pygame.K_DOWN]:
-        snake.y += vel
+    #calls for movement of the snake
+    snake.move()
 
     screen.fill((0,0,0))
     
