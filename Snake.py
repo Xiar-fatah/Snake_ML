@@ -18,18 +18,23 @@ class Snake(object):
         self.y = y
         self.width = width
         self.height = height
-        self.vel = 5
+        self.vel = 20
         self.hitbox = (self.x, self.y, self.width, self.height)
         self.rect = pygame.Rect(self.hitbox)
+        self.vel
         self.directions = [0,0,0,1] # Initial position is down   
-
+    
         #TEST
-        snake_pos = [[self.x,self.y]]
-        
-
+        self.bodies = 4
+        self.positions = [[self.x,self.y],[self.x,self.y-20],[self.x,self.y-40], [self.x,self.y-60]]
+        self.tail = self.positions[self.bodies-1]
     #Move function is for the movement of the snake
     def move(self):
-
+        #Updates the positions of the rest of the snake body
+        for w in range(self.bodies-1,0,-1):
+            self.positions[w][0] = self.positions[w-1][0]  
+            self.positions[w][1] = self.positions[w-1][1]
+            
         #Check if the key is pressed and then moves the snake in that direction
         #and is added to not allow the player to move backwards when it is moving forwards
         if keys[pygame.K_LEFT] and self.directions[1] != 1 :
@@ -47,28 +52,45 @@ class Snake(object):
 
         #To move with a constant velocity, directions was introduce, [1,0,0,0] makes the snake move only left
         if self.directions[0] == 1:
-            self.x = self.x - 1
+            self.x = self.x - self.vel
+            self.positions[0][0] = self.x 
         #right
         elif self.directions[1] == 1:
-            self.x = self.x + 1
+            self.x = self.x + self.vel
+            self.positions[0][0] = self.x 
         #down
         elif self.directions[2] == 1:
-            self.y = self.y - 1
+            self.y = self.y - self.vel
+            self.positions[0][1] = self.y
         #up
         elif self.directions[3] == 1:
-            self.y = self.y + 1
+            self.y = self.y + self.vel
+            self.positions[0][1] = self.y
 
+
+        
     #add length to the snake
     #def addlen(self):
         
+#        self.positions.append([self.x,self.y])
+
 
         
     #Draw the snake
     def draw(self, screen):
         
         self.rect = pygame.Rect(self.hitbox) #Values gets updated heres
-
         pygame.draw.rect(screen, (254,255,242), (self.x, self.y, self.width, self.height))
+        #Update the positions of the head in the list
+        
+
+        for i in range(0,self.bodies-1):
+            pygame.draw.rect(screen, (254,255,242), (self.positions[i][0], self.positions[i][1], self.width, self.height))
+
+           
+
+
+
         self.hitbox = (self.x, self.y, self.height,  self.width) #Updating the position of the hitbox
         pygame.draw.rect(screen, (255,0,0), self.hitbox, 2)
         
@@ -108,11 +130,11 @@ def redrawGameWindow():
 
 Bool = True
 
-snake = Snake(50, 50, 15, 15)
-apple = Apple(100, 100, 15, 15)
+snake = Snake(50, 50, 20, 20)
+apple = Apple(100, 100, 20, 20)
 vel = 5
 while Bool:
-    pygame.time.delay(10) # This will delay the game the given amount of milliseconds. In our casee 0.1 seconds will be the delay
+    pygame.time.delay(200) # This will delay the game the given amount of milliseconds. In our casee 0.1 seconds will be the delay
 
     for event in pygame.event.get():  # This will loop through a list of any keyboard or mouse events.
         if event.type == pygame.QUIT: # Checks if the red button in the corner of the window is clicked
@@ -120,7 +142,7 @@ while Bool:
 
     #Check collision and generate new apple
     if apple.is_collided_with(snake):
-        apple = Apple(random.random()*500, random.random()*500, 15, 15)
+        apple = Apple(random.random()*500, random.random()*500, 20, 20)
         #Calls addlen function to make the snake longer
         #snake.addlen() 
     keys = pygame.key.get_pressed()
