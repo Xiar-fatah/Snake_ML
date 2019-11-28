@@ -3,7 +3,7 @@
 import pygame
 import random as random
 
-size = width, height = 600, 600
+size = width, height = 500, 500
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Snake")
 
@@ -25,9 +25,10 @@ class Snake(object):
         self.directions = [0,0,0,1] # Initial position is down   
     
         #TEST
-        self.bodies = 4
-        self.positions = [[self.x,self.y],[self.x,self.y-20],[self.x,self.y-40], [self.x,self.y-60]]
+        self.bodies = 3
+        self.positions = [[self.x,self.y],[self.x,self.y-self.y],[self.x,self.y-2*self.y], [self.x,self.y-3*self.y]]
         self.tail = self.positions[self.bodies-1]
+        
     #Move function is for the movement of the snake
     def move(self):
         #Updates the positions of the rest of the snake body
@@ -70,7 +71,9 @@ class Snake(object):
 
         
     #add length to the snake
-    #def addlen(self):
+    def addlen(self):
+        self.bodies += 1
+        self.positions.append([self.x,self.y-1000])
         
 #        self.positions.append([self.x,self.y])
 
@@ -126,11 +129,9 @@ def redrawGameWindow():
 
 
 
-
-
 Bool = True
 
-snake = Snake(50, 50, 20, 20)
+snake = Snake(60, 60, 20, 20)
 apple = Apple(100, 100, 20, 20)
 vel = 5
 while Bool:
@@ -144,7 +145,16 @@ while Bool:
     if apple.is_collided_with(snake):
         apple = Apple(random.random()*500, random.random()*500, 20, 20)
         #Calls addlen function to make the snake longer
-        #snake.addlen() 
+        snake.addlen()
+    #Check collision with the snake itself
+    for i in range(1,len(snake.positions)):
+        if snake.positions[0][1] == snake.positions[i][1] and snake.positions[0][0] == snake.positions[i][0]:
+            print("collision")
+
+
+
+
+        
     keys = pygame.key.get_pressed()
 
     #calls for movement of the snake
