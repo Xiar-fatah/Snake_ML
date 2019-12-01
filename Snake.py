@@ -2,7 +2,7 @@
 
 import pygame
 import random as random
-
+import numpy as np
 size = width, height = 500, 500
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Snake")
@@ -21,7 +21,6 @@ class Snake(object):
         self.vel = 20
         self.hitbox = (self.x, self.y, self.width, self.height)
         self.rect = pygame.Rect(self.hitbox)
-        self.vel
         self.directions = [0,0,0,1] # Initial position is down   
     
         #TEST
@@ -127,7 +126,14 @@ def redrawGameWindow():
     
     pygame.display.update()
 
-
+#Generates a random number for x and y between 0,20,40,....,500
+def randGen():
+    x = np.linspace(0,500,26)
+    y = np.linspace(0,500,26)
+    rand_num = np.random.randint(0,26)
+    np.random.shuffle(x), np.random.shuffle(y)
+    return x[rand_num],y[rand_num]
+    
 
 Bool = True
 
@@ -143,7 +149,7 @@ while Bool:
 
     #Check collision and generate new apple
     if apple.is_collided_with(snake):
-        apple = Apple(random.random()*500, random.random()*500, 20, 20)
+        apple = Apple(randGen()[0], randGen()[1], 20, 20)
         #Calls addlen function to make the snake longer
         snake.addlen()
     #Check collision with the snake itself
@@ -166,6 +172,5 @@ while Bool:
 
 
 pygame.quit() 
-
 
 
