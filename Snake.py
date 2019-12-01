@@ -3,12 +3,6 @@
 import pygame
 import random as random
 import numpy as np
-size = width, height = 500, 500
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Snake")
-
-#Make it available to quit the client
-Bool = True
 
 
 class Snake(object):
@@ -30,11 +24,14 @@ class Snake(object):
         
     #Move function is for the movement of the snake
     def move(self):
+        
         #Updates the positions of the rest of the snake body
         for w in range(self.bodies-1,0,-1):
             self.positions[w][0] = self.positions[w-1][0]  
             self.positions[w][1] = self.positions[w-1][1]
-            
+
+        keys = pygame.key.get_pressed()
+
         #Check if the key is pressed and then moves the snake in that direction
         #and is added to not allow the player to move backwards when it is moving forwards
         if keys[pygame.K_LEFT] and self.directions[1] != 1 :
@@ -79,7 +76,7 @@ class Snake(object):
 
         
     #Draw the snake
-    def draw(self, screen):
+    def draw(self, screen, snake):
         
         self.rect = pygame.Rect(self.hitbox) #Values gets updated heres
         pygame.draw.rect(screen, (254,255,242), (self.x, self.y, self.width, self.height))
@@ -108,7 +105,7 @@ class Apple(object):
 
         self.rect = pygame.Rect(self.test)
 
-    def draw(self, screen):
+    def draw(self, screen, apple):
 
         pygame.draw.rect(screen, (100,255,242), (self.x, self.y, self.width, self.height))
         self.hitbox = (self.x, self.y, self.height,  self.width) #Updating the position of the hitbox
@@ -119,9 +116,9 @@ class Apple(object):
 
 
     
-def redrawGameWindow():
-    snake.draw(screen)
-    apple.draw(screen)
+def redrawGameWindow(snake,apple,screen):
+    snake.draw(screen, apple)
+    apple.draw(screen, snake)
 
     
     pygame.display.update()
@@ -134,43 +131,49 @@ def randGen():
     np.random.shuffle(x), np.random.shuffle(y)
     return x[rand_num],y[rand_num]
     
+def main():
+    size = width, height = 600, 600
+    screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("Snake")
 
-Bool = True
+    #Make it available to quit the client
+    Bool = True
+    Bool = True
 
-snake = Snake(60, 60, 20, 20)
-apple = Apple(100, 100, 20, 20)
-vel = 5
-while Bool:
-    pygame.time.delay(200) # This will delay the game the given amount of milliseconds. In our casee 0.1 seconds will be the delay
+    snake = Snake(60, 60, 20, 20)
+    apple = Apple(100, 100, 20, 20)
+    vel = 5
+    while Bool:
+        pygame.time.delay(130) # This will delay the game the given amount of milliseconds. In our casee 0.1 seconds will be the delay
 
-    for event in pygame.event.get():  # This will loop through a list of any keyboard or mouse events.
-        if event.type == pygame.QUIT: # Checks if the red button in the corner of the window is clicked
-            Bool = False
+        for event in pygame.event.get():  # This will loop through a list of any keyboard or mouse events.
+            if event.type == pygame.QUIT: # Checks if the red button in the corner of the window is clicked
+                Bool = False
 
-    #Check collision and generate new apple
-    if apple.is_collided_with(snake):
-        apple = Apple(randGen()[0], randGen()[1], 20, 20)
-        #Calls addlen function to make the snake longer
-        snake.addlen()
-    #Check collision with the snake itself
-    for i in range(1,len(snake.positions)):
-        if snake.positions[0][1] == snake.positions[i][1] and snake.positions[0][0] == snake.positions[i][0]:
-            print("collision")
-
-
-
+        #Check collision and generate new apple
+        if apple.is_collided_with(snake):
+            apple = Apple(randGen()[0], randGen()[1], 20, 20)
+            #Calls addlen function to make the snake longer
+            snake.addlen()
+        #Check collision with the snake itself
+        for i in range(1,len(snake.positions)):
+            if snake.positions[0][1] == snake.positions[i][1] and snake.positions[0][0] == snake.positions[i][0]:
+                main()
 
         
-    keys = pygame.key.get_pressed()
 
-    #calls for movement of the snake
-    snake.move()
+            
 
-    screen.fill((0,0,0))
-    
-    redrawGameWindow()
+        #calls for movement of the snake
+        snake.move()
+
+        screen.fill((0,0,0))
+        
+        redrawGameWindow(snake,apple,screen)
 
 
-pygame.quit() 
+    pygame.quit() 
 
+#Starts the game
+main()
 
