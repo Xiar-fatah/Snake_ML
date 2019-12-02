@@ -129,11 +129,15 @@ def redrawGameWindow(snake,apple,screen):
     pygame.display.update()
 
 #Generates a random number for x and y between 0,20,40,....,500
-def randGen():
+def randGen(snake):
     x = np.linspace(0,500,26)
     y = np.linspace(0,500,26)
     rand_num = np.random.randint(0,26)
-    np.random.shuffle(x), np.random.shuffle(y)
+    
+    while x[rand_num] == snake.x and y[rand_num] == snake.y:
+        np.random.shuffle(x), np.random.shuffle(y)
+        
+    
     return x[rand_num],y[rand_num]
     
 def main():
@@ -152,7 +156,7 @@ def main():
 
         #Check collision and generate new apple
         if apple.is_collided_with(snake):
-            apple = Apple(randGen()[0], randGen()[1], 20, 20)
+            apple = Apple(randGen(snake)[0], randGen(snake)[1], 20, 20)
             #Calls addlen function to make the snake longer
             snake.addlen()
         #Check collision with the snake itself
