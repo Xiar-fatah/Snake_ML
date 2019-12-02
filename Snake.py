@@ -114,8 +114,13 @@ class Apple(object):
     def is_collided_with(self, snake):
         return self.rect.colliderect(snake.rect)
 
-
-    
+##class Wall(object):
+##    def __init_(self,width,height):
+##        self.width = width
+##        self.height = height
+##        self.hitbox = (self.width, self.height)
+##    def draw(self, screen, wall)
+###Draws the game
 def redrawGameWindow(snake,apple,screen):
     snake.draw(screen, apple)
     apple.draw(screen, snake)
@@ -135,14 +140,9 @@ def main():
     size = width, height = 600, 600
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("Snake")
-
-    #Make it available to quit the client
     Bool = True
-    Bool = True
-
     snake = Snake(60, 60, 20, 20)
     apple = Apple(100, 100, 20, 20)
-    vel = 5
     while Bool:
         pygame.time.delay(130) # This will delay the game the given amount of milliseconds. In our casee 0.1 seconds will be the delay
 
@@ -159,10 +159,8 @@ def main():
         for i in range(1,len(snake.positions)):
             if snake.positions[0][1] == snake.positions[i][1] and snake.positions[0][0] == snake.positions[i][0]:
                 main()
-
-        
-
-            
+        if snake.x >= 600 or snake.x == -20 or snake.y >= 600 or snake.y == -20:
+            main()
 
         #calls for movement of the snake
         snake.move()
