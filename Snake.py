@@ -148,7 +148,7 @@ def main():
     snake = Snake(60, 60, 20, 20)
     apple = Apple(100, 100, 20, 20)
     while Bool:
-        pygame.time.delay(130) # This will delay the game the given amount of milliseconds. In our casee 0.1 seconds will be the delay
+        pygame.time.delay(120) # This will delay the game the given amount of milliseconds. In our casee 0.1 seconds will be the delay
 
         for event in pygame.event.get():  # This will loop through a list of any keyboard or mouse events.
             if event.type == pygame.QUIT: # Checks if the red button in the corner of the window is clicked
