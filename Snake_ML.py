@@ -4,6 +4,9 @@ import pygame
 import random as random
 import numpy as np
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 class Snake(object):
     
@@ -22,6 +25,9 @@ class Snake(object):
         self.positions = [[self.x,self.y],[self.x,self.y-self.y],[self.x,self.y-2*self.y], [self.x,self.y-3*self.y]]
         self.tail = self.positions[self.bodies-1]
         
+        #Variables for machine learning
+        #input_arr[0],input_arr[1],input_arr[2],input_arr[3] length to the left,right,up and down wall respectively
+        self.input_arr = [0,0,0,0]
         
     #Move function is for the movement of the snake
     def move(self):
@@ -65,6 +71,18 @@ class Snake(object):
             self.y = self.y + self.vel
             self.positions[0][1] = self.y
 
+        #The position of the head is given by self.positions[0][0]
+        
+        #The total length to the left wall is the distance x-x_p = 0 - x_p
+        self.input_arr[0] = 20 - self.positions[0][0]
+        #The total length to the right wall is the distance x-x_p = 600 - x_p
+        self.input_arr[1] = 600 - self.positions[0][0]
+        #The total length to the top wall is the distance y-y_p = 0 - y_p
+        self.input_arr[2] = 20 - self.positions[0][1]
+        #The total length to the down wall is the distance y-y_p = 600 - y_p
+        self.input_arr[3] = 600 - self.positions[0][1]
+        #Note however we want the last distance to be 20, if it is 20 and the snake takes a step further
+        #it will die.
     #Adds length to the snake
     def addlen(self):
         self.bodies += 1
@@ -131,6 +149,34 @@ def randGen(snake):
         
     
     return x[rand_num],y[rand_num]
+
+class SnakeNN(nn.Module):
+
+    def __init__(self):
+        super(SnakeNN, self).__init__()
+        # 1 input image channel, 6 output channels, 3x3 square convolution
+        # kernel
+        self.conv1 = nn.Conv2d(1, 6, 3)
+        self.conv2 = nn.Conv2d(6, 16, 3)
+        # an affine operation: y = Wx + b
+        self.fc1 = nn.Linear(16 * 6 * 6, 120)  # 6*6 from image dimension
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 10)
+
+    def forward(self, x):
+        # Max pooling over a (2, 2) window
+        x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
+        # If the size is a square you can only specify a single number
+        x = F.max_pool2d(F.relu(self.conv2(x)), 2)
+        x = x.view(-1, self.num_flat_features(x))
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+
+
+#net = Net()
     
 def main():
     size = width, height = 600, 600
@@ -160,11 +206,11 @@ def main():
 
         #calls for movement of the snake
         snake.move()
+        
 
         screen.fill((0,0,0))
-        
+        print(snake.input_arr)
         redrawGameWindow(snake,apple,screen)
-
 
     pygame.quit() 
 
